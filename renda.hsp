@@ -1,0 +1,165 @@
+#include "d3m.hsp"	
+
+title "連打数チャレンジ"
+
+*start
+;screen 0,800,850      ;ウインドウ0を800,550の大きさに
+
+screen_hight=1080
+screen_width=1920
+
+
+
+start_button= "スタート"
+start_label= *men
+start_pos_x= 460
+start_pos_y= 780
+
+;chgdisp 2,screen_width,screen_hight
+bgscr 0,screen_width,screen_hight,0,0,0:gsel 0,2
+color 0,0,0:boxf
+font "ＭＳ 明朝",150,3
+pos 360,60
+color 255,0,0
+mes "連打数チャレンジ "
+font "ＭＳ 明朝",50,1
+pos 460,290
+color 255,255,255
+mes "・10秒間ボタンを連打\n・連打数が多い方が勝ち\n\n準備が出来ましたら\n以下のボタンをクリックしてください"
+objmode 2
+font "ＭＳ 明朝",50,1
+objsize 1000,100
+	
+pos start_pos_x,start_pos_y
+button start_button,*men
+stop
+
+
+
+*main
+;screen 0,800,550
+x=350:y=240         ;paoの場所
+mozi="右の人"  ;moziに""の中身出力
+mozi2="左の人"
+
+timelimit=3000
+starttime=d3Timer()
+cls 4
+font "ＭＳ 明朝",500,1
+
+repeat
+	color 0,0,0:boxf   ;黒で画面を塗りつぶす
+	color 255,255,255   ;文字の色を白に
+
+	pos 840,300
+	nowtime=d3timer()	//今のミリ秒を取得
+	dtime=nowtime-starttime-1000		//スタート時の時間と今の時間の差(経過した時間)
+	;if (nowtime-starttime=0) : break
+	if (nowtime-starttime>=timelimit) : break		//dtimeがtimelimitより大きくなった(制限時間が経過した)らループを抜ける
+	mes (timelimit-dtime)/1000			//…を、秒単位に変換して書く
+	wait 100
+loop
+                                                                                                                                         
+qw=0
+test=0 
+
+timelimit=10000		;制限時間(ミリ秒単位)
+starttime=d3Timer()		;スタート時の時間(Windowsが起動してからのミリ秒)を取得
+
+repeat       ;繰り返しの始め
+	redraw 2       ;ココから下は仮想画面に描く
+
+	color 0,0,0:boxf   
+	color 255,255,255   
+
+	pos x,y
+
+	font "ＭＳ 明朝",200,1
+	stick key
+
+	if ( key=16 ){
+				qw=1+qw
+				}
+	if ( key=32 ){
+				test=1+test
+				}
+	
+	if ( key=48 ){
+				qw=1+qw
+				test=1+test
+			}
+	mozi2=test+hande
+	mozi=qw
+	nowtime=d3timer()	//今のミリ秒を取得
+	dtime=nowtime-starttime-1000		//スタート時の時間と今の時間の差(経過した時間)
+	if (nowtime-starttime+3000<=timelimit){
+		print mozi
+		print mozi2
+	}else{
+		mes "\n"
+	}
+	mes "残り時間:"+(timelimit-dtime)/1000+"秒"			//…を、秒単位に変換して書く
+	redraw 1
+
+ 	//dtimeがtimelimitより大きくなった(制限時間が経過した)らループを抜ける
+	if (nowtime-starttime>timelimit) : break	
+	await 1
+loop
+
+;結果画面
+if(mozi="プレイヤー1"):mozi=0
+if(mozi2="プレイヤー2"):mozi2=hande
+cls 4
+color 0,0,0:boxf
+color 255,255,255
+pos 400,300
+font "ＭＳ 明朝",400,1
+mes "終了!!"
+wait 500
+color 0,0,0:boxf
+color 255,255,255
+pos 300,250
+font "ＭＳ 明朝",100,1
+mes "結果は…\n"
+wait 300
+pos 500,400
+font "ＭＳ 明朝",180,1
+mes "右の人 "+(mozi)+"回\n左の人 "+(mozi2)+"回"
+wait 300
+cls 4
+color 0,0,0:boxf
+color 255,255,255
+pos 500,50
+font "ＭＳ 明朝",300,1
+
+if(mozi2>mozi) : mes "勝者\n\n左の人"
+if(mozi2<mozi) : mes "勝者\n\n右の人"
+if(mozi2==mozi): mes "\n引き分け！！"
+
+repeat
+	stick key
+		if ( key=128 ){
+			exec "launcher.exe"
+			end
+		}
+		if ( key=16 ){
+			goto *start
+		}
+loop
+stop
+
+*men
+hande=0
+goto *main
+
+*women
+hande=10
+goto *main
+
+*child
+hande=10
+goto *main
+
+*grand
+hande=20
+goto *main

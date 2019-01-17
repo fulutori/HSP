@@ -1,0 +1,138 @@
+#include "mod_counttimer.hsp"
+#include "d3m.hsp"
+
+title "反応速度チャレンジ"
+
+*first
+
+;chgdisp 2,1920,1080
+bgscr 0,1920,1080,0,0,0:gsel 0,2
+color 0,0,0:boxf
+color 255,255,255
+font "ＭＳ 明朝",150,3
+pos 300,110
+color 255,0,0
+mes "反応速度チャレンジ "
+font "ＭＳ 明朝",45,1
+pos 550,350
+color 255,255,255
+mes "・画面が白くなったらボタンを押す\n・より早く押した方の勝ち\n\n準備が出来ましたら\n以下のボタンをクリックしてください"
+objmode 2
+font "ＭＳ 明朝",120,1
+objsize 1000,200
+pos 460,700
+button "スタート",*second
+stop
+
+*second
+//「スタート」を押してから2秒は絶対に白くしない
+timelimit=2000
+starttime=d3Timer()
+cls 4
+repeat
+	color 0,0,0:boxf
+	
+	nowtime=d3timer()
+	dtime=nowtime-starttime-1000
+	if (nowtime-starttime>timelimit) : break
+
+	await 1
+
+loop
+
+timelimit=5000
+starttime=d3Timer()
+randomize
+number=rnd(5000)
+
+repeat
+
+	color 0,0,0:boxf   
+	color 255,255,255  
+	font "ＭＳ 明朝",50,1
+	pos 50,50
+	nowtime=d3timer()
+	dtime=nowtime-starttime
+	if (nowtime-starttime+number+1000>timelimit) : break
+	//mes "背景が白になるまで\n"+(timelimit-dtime-number)/1000+"秒"
+	await 1
+	
+loop
+cls 0
+
+//タイマー起動
+	make_timer timer, 0
+	resume_count timer
+
+	font msgothic, 16
+	px = 0
+	py = 72
+	
+	repeat
+		// 現在の経過時間の取得
+		get_count timer
+		redraw 0
+		stick key
+		if ( key=16 ){
+			cyber=strf( "%8.3f", refdval / 1000 )
+		}
+		if ( key=32 ){
+			challenger=strf( "%8.3f", refdval / 1000 )
+		}
+		if ( key=48 ){
+			cyber=strf( "%8.3f", refdval / 1000 )
+			challenger=strf( "%8.3f", refdval / 1000 )
+		}
+		if ( cyber!=0&challenger!=0 ){
+			pause_count timer
+			reset_count timer
+			break
+		}
+
+		await 1
+	loop
+	redraw 0
+
+;結果画面
+
+cls 4
+color 0,0,0:boxf
+color 255,255,255
+pos 400,300
+font "ＭＳ 明朝",400,1
+mes "終了!!"
+wait 500
+color 0,0,0:boxf
+color 255,255,255
+pos 270,250
+font "ＭＳ 明朝",100,1
+mes "結果は…\n"
+wait 300
+pos 370,400
+font "ＭＳ 明朝",130,1
+mes "右の人 "+(cyber)+"秒"
+mes "左の人 "+(challenger)+"秒"
+wait 300
+cls 4
+color 0,0,0:boxf
+color 255,255,255
+pos 500,50
+font "ＭＳ 明朝",300,1
+if ( double(cyber)>double(challenger) ) : mes "勝者\n\n左の人"
+if ( double(cyber)<double(challenger) ) : mes "勝者\n\n右の人"
+if ( double(cyber)=double(challenger) ) : mes "\n引き分け！！"
+
+cyber=0
+challenger=0
+
+repeat
+	stick key
+		if ( key=128 ){
+			exec "launcher.exe"
+			end
+		}
+		if ( key=16 ){
+			goto *first
+		}
+loop
+stop

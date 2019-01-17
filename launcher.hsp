@@ -1,0 +1,59 @@
+taitoru="`ŒÈ‚ÌŒÀŠE‚ğ’´‚¦‚ë`"
+
+title taitoru
+
+display_h=1080
+display_w=1920
+
+button_mes="˜A‘Å”","”½‰‘¬“x","2048"
+button_label=*renda,*hannou,*sub_leader
+button_high=13,21,29
+kaisetu="10•bŠÔ‚Ğ‚½‚·‚ç˜A‘Å!!","‰æ–Ê‚ª”’‚­‚È‚Á‚½‚çPUSH!!","ƒpƒYƒ‹ƒQ[ƒ€"
+
+base_h=display_h/40
+base_w=display_w/20
+
+button_size_x=base_w*4
+button_size_y=base_h*7
+
+font_size=base_h*2
+
+;chgdisp 2,display_w,display_h
+bgscr 0,display_w,display_h,0,0,0:gsel 0,1
+color 0,0,0:boxf
+
+font "‚l‚r –¾’©",base_h*6,3
+mes taitoru //ƒZƒ“ƒ^[ƒ|ƒWƒVƒ‡ƒ“Zo—p
+center=(ginfo(26)-ginfo(14))/2
+color 255,60,60
+pos center,base_h*2
+mes taitoru
+color 255,255,255
+
+objmode 2
+font "‚l‚r –¾’©",font_size,0
+objsize button_size_x,button_size_y
+
+for ct,0,3,1
+	pos center,base_h*button_high(ct)
+	button button_mes(ct),button_label(ct)
+
+next
+
+for ct,0,3,1
+	pos center+(base_w*5),base_h*(button_high(ct)+2)
+	mes kaisetu(ct)
+next
+stop
+
+*renda
+	exec "renda.exe"
+	end
+
+*hannou
+	exec "hannou.exe"
+	end
+
+*sub_leader
+	exec "game2048.exe"
+	end
